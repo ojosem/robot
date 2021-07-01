@@ -1,6 +1,19 @@
 import sys
+from contextlib import contextmanager
 
-__all__ = ["Robot"]
+from tinydb import TinyDB, table
+from tinydb.operations import decrement, increment
+
+__all__ = ["Robot", "robot_db"]
+
+DB_PATH = "./robot/db.json"
+
+
+@contextmanager
+def robot_db(db_path):
+    db = TinyDB(db_path)
+    yield db
+    db.close()
 
 
 def validate_coordinate(coord):
@@ -12,84 +25,82 @@ def validate_coordinate(coord):
     if coord < 0 or coord > 4:
         print("Position must be between 0 and 4.")
         sys.exit(1)
-    return True
+    return coord
 
 
-def test_position(coord):
-    if coord < 0 or coord > 4:
-        return False
-    return True
-
-
-def update_position(cur_coord, facing):
-    if facing in ("north", "east"):
-        new_coord = cur_coord + 1
+def validate_facing(facing):
+    if (facing := facing.upper()) in ("NORTH", "SOUTH", "EAST", "WEST"):
+        return facing
     else:
-        new_coord = cur_coord - 1
-    if test_position(new_coord):
-        return new_coord
-    return cur_coord
+        print("The robot can only face NORTH, SOUTH, EAST, or WEST.")
+        sys.exit(1)
 
 
 class Robot:
-    def __init__(self, x: int, y: int, facing: str):
-        self.x = x
-        self.y = y
-        self.facing = facing
+    @staticmethod
+    def place(placement, db_path=DB_PATH):
+        try:
+            placement = placement.split(",")
+        except:
+            print("Error: invalid placement. Try 'robot --help' for help.")
+        x = validate_coordinate(placement[0])
+        y = validate_coordinate(placement[1])
+        facing = validate_facing(placement[2])
+        with robot_db(db_path) as db:
+            db.upsert(table.Document({"x": x, "y": y, "facing": facing}, doc_id=1))
 
-    @property
-    def x(self):
-        return self._x
+    @staticmethod
+    def report(db_path=DB_PATH):
+        """Report the robot's position on the board."""
+        with robot_db(db_path) as db:
+            robot = db.all()[0]
+            x, y, facing = robot["x"], robot["y"], robot["facing"]
+            print(f"{x},{y},{facing}")
 
-    @x.setter
-    def x(self, x):
-        if validate_coordinate(x):
-            self._x = int(x)
-
-    @property
-    def y(self):
-        return self._y
-
-    @y.setter
-    def y(self, y):
-        if validate_coordinate(y):
-            self._y = int(y)
-
-    @property
-    def facing(self):
-        return self._facing
-
-    @facing.setter
-    def facing(self, facing):
-        if facing.lower() in ("north", "east", "south", "west"):
-            self._facing = facing.upper()
-        else:
-            print("The robot can only face NORTH, EAST, SOUTH, or WEST.")
-            sys.exit(1)
-
-    def place(self):
-        """Place the robot on the board."""
-        pass
-
-    def move(self):
+    @staticmethod
+    def move(db_path=DB_PATH):
         """Move the robot one square in the direction it's facing, if possible."""
-        if (facing := self.facing.lower()) in ("north", "south"):
-            self.position = (self.x, update_position(self.y, facing))
-        else:
-            self.position = (update_position(self.x, facing), self.y)
-        pass
+        with robot_db(db_path) as db:
+            robot = db.all()[0]
+            if robot["facing"] == "NORTH" and robot["y"] < 4:
+                db.update(increment("y"))
+            elif robot["facing"] == "SOUTH" and robot["y"] > 0:
+                db.update(decrement("y"))
+            elif robot["facing"] == "EAST" and robot["x"] < 4:
+                db.update(increment("x"))
+            elif robot["facing"] == "WEST" and robot["x"] > 0:
+                db.update(decrement("x"))
+            else:
+                print("I'm sorry Dave, I'm afraid I can't do that.")
 
-    def left(self):
-        """Rotate the robot counterclockwise 90 degrees."""
-        pass
-
-    def right(self):
-        """Rotate the robot clockwise 90 degrees."""
-        pass
-
-    def report(self):
-        """Print the robot's position on the board."""
-        print(self)
+    @staticmethod
+    def rotate(direction, db_path=DB_PATH):
+        if direction not in ("LEFT", "RIGHT"):
+            print("The robot can only rotate LEFT OR RIGHT.")
+            sys.exit(1)
+        with robot_db(db_path) as db:
+            robot = db.all()[0]
+            if robot["facing"] == "NORTH":
+                if direction == "RIGHT":
+                    facing = "EAST"
+                else:
+                    facing = "WEST"
+            elif robot["facing"] == "SOUTH":
+                if direction == "RIGHT":
+                    facing = "WEST"
+                else:
+                    facing = "EAST"
+            elif robot["facing"] == "EAST":
+                if direction == "RIGHT":
+                    facing = "SOUTH"
+                else:
+                    facing = "NORTH"
+            elif robot["facing"] == "WEST":
+                if direction == "RIGHT":
+                    facing = "NORTH"
+                else:
+                    facing = "SOUTH"
+            db.update({"facing": facing})
 
     def __repr__(self):
         return f"{self.x},{self.y},{self.facing}"
