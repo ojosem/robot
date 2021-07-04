@@ -19,18 +19,18 @@ def robot_db(db_path):
 
 
 def validate_coordinate(coord):
+    """Check the coordinates input by the user are integers between 0 and 4."""
     try:
-        (coord := int(coord))
+        coord = int(coord)
+        if coord >= 0 and coord <= 4:
+            return coord
     except:
-        print("Position must be provided as an integer.")
-        sys.exit(1)
-    if coord < 0 or coord > 4:
         print("Position must be between 0 and 4.")
         sys.exit(1)
-    return coord
 
 
 def validate_facing(facing):
+    """Check the direction the user turned the robot to face is valid."""
     if (facing := facing.upper()) in ("NORTH", "SOUTH", "EAST", "WEST"):
         return facing
     else:
@@ -41,13 +41,15 @@ def validate_facing(facing):
 class Robot:
     @staticmethod
     def place(placement, db_path=DB_PATH):
+        """Place the robot on the board."""
         try:
-            placement = placement.split(",")
+            x, y, facing = placement.split(",")
         except:
             print("Error: invalid placement. Try 'robot --help' for help.")
-        x = validate_coordinate(placement[0])
-        y = validate_coordinate(placement[1])
-        facing = validate_facing(placement[2])
+            sys.exit(1)
+        x = validate_coordinate(x)
+        y = validate_coordinate(y)
+        facing = validate_facing(facing)
         with robot_db(db_path) as db:
             db.upsert(table.Document({"x": x, "y": y, "facing": facing}, doc_id=1))
 
@@ -77,6 +79,7 @@ class Robot:
 
     @staticmethod
     def rotate(direction, db_path=DB_PATH):
+        """Rotate the robot 90 degrees [anti]clockwise."""
         if direction not in ("LEFT", "RIGHT"):
             print("The robot can only rotate LEFT OR RIGHT.")
             sys.exit(1)

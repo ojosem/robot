@@ -14,6 +14,9 @@ def test_place_bad_input():
     result = runner.invoke(app, ["place", "1,4,NORYH"])
     assert result.exit_code == 1
     assert result.stdout == "The robot can only face NORTH, SOUTH, EAST, or WEST.\n"
+    result = runner.invoke(app, ["place", "123"])
+    assert result.exit_code == 1
+    assert result.stdout == "Error: invalid placement. Try 'robot --help' for help.\n"
 
 
 def test_place_extra_input():
