@@ -81,25 +81,13 @@ class Robot:
         with robot_db(db_path) as db:
             robot = db.all()[0]
             if robot["facing"] == "NORTH":
-                if direction == "RIGHT":
-                    facing = "EAST"
-                else:
-                    facing = "WEST"
+                facing = "EAST" if direction == "RIGHT" else "WEST"
             elif robot["facing"] == "SOUTH":
-                if direction == "RIGHT":
-                    facing = "WEST"
-                else:
-                    facing = "EAST"
+                facing = "WEST" if direction == "RIGHT" else "EAST"
             elif robot["facing"] == "EAST":
-                if direction == "RIGHT":
-                    facing = "SOUTH"
-                else:
-                    facing = "NORTH"
+                facing = "SOUTH" if direction == "RIGHT" else "NORTH"
             elif robot["facing"] == "WEST":
-                if direction == "RIGHT":
-                    facing = "NORTH"
-                else:
-                    facing = "SOUTH"
+                facing = "NORTH" if direction == "RIGHT" else "SOUTH"
             db.update({"facing": facing})
 
     def __repr__(self):
