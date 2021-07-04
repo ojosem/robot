@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "robot-rock"
-version = "0.2.2"
+version = "0.2.3"
 description = ""
 authors = ["Oliver Josem <omjosem@gmail.com>"]
 readme = "README.md"
