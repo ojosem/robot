@@ -36,7 +36,7 @@ $ robot-rock [OPTIONS] COMMAND [ARGS]...
 **Commands**:
 
 - `left`: Rotate the robot counterclockwise 90 degress.
-- `move`: Move the robot forward one square, without falling off the eboard.
+- `move`: Move the robot forward one square, without falling off the board.
 - `place`: Place the robot on the board.
 - `report`: Report the robot's position on the board.
 - `right`: Rotate the robot clockwise 90 degress.
