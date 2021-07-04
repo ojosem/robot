@@ -4,6 +4,8 @@ This is a command line application implementation of Victor Nguyen's [toy robot 
 
 ## Installation
 
+`robot-rock` requires Python 3.7 or above.
+
 The best way to install `robot-rock` is via [pipx](https://github.com/pypa/pipx#install-pipx), which will isolate the installation but make the app available globally:
 
 ```console
@@ -20,7 +22,7 @@ And then activate the virtual environment and install the app with vanilla pip:
 
 ```console
 $ source .venv-robot/bin/activate
-(robot-rock)$ pip install --user robot-rock
+(robot-rock)$ pip install robot-rock
 ```
 
 ## Usage:
