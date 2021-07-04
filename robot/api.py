@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from tinydb import TinyDB, table
 from tinydb.operations import decrement, increment
 
-__all__ = ["Robot", "robot_db"]
+__all__ = ["Robot"]
 
 DB_PATH = "./robot/db.json"
 
