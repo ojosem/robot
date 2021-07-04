@@ -2,7 +2,6 @@ import pytest
 from tinydb import TinyDB
 
 
-
 @pytest.fixture(scope="module")
 def db_dir(tmp_path_factory):
     """A temp dir for the db"""

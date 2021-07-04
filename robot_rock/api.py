@@ -6,7 +6,7 @@ from tinydb.operations import decrement, increment
 
 __all__ = ["Robot"]
 
-DB_PATH = "./robot/db.json"
+DB_PATH = "./robot_rock/db.json"
 
 
 @contextmanager

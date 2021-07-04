@@ -1,4 +1,4 @@
-from robot import __version__, Robot
+from robot_rock import __version__, Robot
 
 
 def test_version():

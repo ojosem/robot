@@ -1,6 +1,6 @@
 import typer
 
-from robot import Robot
+from robot_rock import Robot
 
 app = typer.Typer(add_completion=False)
 

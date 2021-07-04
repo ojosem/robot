@@ -1,4 +1,4 @@
-from robot import app
+from robot_rock import app
 from typer.testing import CliRunner
 
 runner = CliRunner()
