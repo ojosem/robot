@@ -1,3 +1,4 @@
+import os
 import sys
 from contextlib import contextmanager
 
@@ -6,7 +7,8 @@ from tinydb.operations import decrement, increment
 
 __all__ = ["Robot"]
 
-DB_PATH = "./robot_rock/db.json"
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(ROOT_DIR, "db.json")
 
 
 @contextmanager
